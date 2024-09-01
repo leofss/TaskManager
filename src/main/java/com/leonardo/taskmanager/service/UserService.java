@@ -1,6 +1,7 @@
 package com.leonardo.taskmanager.service;
 
 import com.leonardo.taskmanager.entity.User;
+import com.leonardo.taskmanager.exception.EmailUniqueViolationException;
 import com.leonardo.taskmanager.exception.EntityNotFoundExecption;
 import com.leonardo.taskmanager.repository.UserRepository;
 import com.leonardo.taskmanager.repository.projection.UserProjection;
@@ -21,6 +22,7 @@ public class UserService {
 
     @Transactional
     public User create(User user){
+        checkIfEmailExists(user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -40,6 +42,7 @@ public class UserService {
 
     @Transactional
     public User edit(Long id, UserDto userDto) {
+        checkIfEmailExists(userDto.getEmail());
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundExecption("User with id " + id + " not found"));
 
@@ -60,5 +63,11 @@ public class UserService {
     @Transactional(readOnly = true)
     public User.Role findRoleByEmail(String email){
         return userRepository.findRoleByEmail(email);
+    }
+
+    private void checkIfEmailExists(String email){
+        if(userRepository.existsByEmail(email)){
+            throw new EmailUniqueViolationException(String.format("User with Email %s already exists", email));
+        }
     }
 }
