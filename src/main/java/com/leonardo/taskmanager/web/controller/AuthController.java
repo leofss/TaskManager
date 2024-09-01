@@ -1,2 +1,39 @@
-package com.leonardo.taskmanager.web.controller;public class AuthController {
+package com.leonardo.taskmanager.web.controller;
+
+import com.leonardo.taskmanager.jwt.JwtToken;
+import com.leonardo.taskmanager.jwt.JwtUserDetailsService;
+import com.leonardo.taskmanager.web.dto.UserLoginDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RequestMapping("api/v1")
+@RestController
+@RequiredArgsConstructor
+public class AuthController {
+    private final JwtUserDetailsService jwtUserDetailsService;
+    private final AuthenticationManager authenticationManager;
+
+    @PostMapping("/auth")
+    public ResponseEntity<JwtToken> authenticate(@RequestBody @Valid UserLoginDto userLoginDto, HttpServletRequest req) {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
+            authenticationManager.authenticate(authenticationToken);
+            JwtToken token = jwtUserDetailsService.getTokenAuthenticate(userLoginDto.getEmail());
+            return ResponseEntity.ok(token);
+
+        }catch (AuthenticationException ex){
+            throw new AccessDeniedException("Invalid credentials");
+        }
+    }
 }
