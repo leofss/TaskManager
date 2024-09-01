@@ -29,7 +29,7 @@ import java.util.Set;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-    private TaskMapper taskMapper;
+
     @Transactional
     public Task create(TaskDto taskDto){
         List<Long> userIds = taskDto.getUserIds();
