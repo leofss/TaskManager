@@ -3,6 +3,8 @@ package com.leonardo.taskmanager.jwt;
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,5 +26,15 @@ public class JwtUserDetailsService implements UserDetailsService {
         User user = userService.findByEmail(email);
 
         return new JwtUserDetails(user);
+    }
+
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof JwtUserDetails userDetails) {
+            return userDetails.getId();
+        }
+
+        return null;
     }
 }

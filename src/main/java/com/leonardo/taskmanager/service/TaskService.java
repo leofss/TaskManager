@@ -3,19 +3,19 @@ package com.leonardo.taskmanager.service;
 import com.leonardo.taskmanager.entity.Task;
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.exception.EntityNotFoundExecption;
+import com.leonardo.taskmanager.exception.UserNotAssignedToTaskException;
+import com.leonardo.taskmanager.jwt.JwtUserDetailsService;
 import com.leonardo.taskmanager.repository.TaskRepository;
 import com.leonardo.taskmanager.repository.UserRepository;
-import com.leonardo.taskmanager.repository.projection.TaskProjection;
-import com.leonardo.taskmanager.web.dto.PageableDto;
 import com.leonardo.taskmanager.web.dto.TaskDto;
 import com.leonardo.taskmanager.web.dto.TaskResponseDto;
-import com.leonardo.taskmanager.web.dto.UserDto;
 import com.leonardo.taskmanager.web.dto.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +29,7 @@ import java.util.Set;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final JwtUserDetailsService jwtUserDetailsService;
 
     @Transactional
     public Task create(TaskDto taskDto){
@@ -71,7 +72,19 @@ public class TaskService {
         List<Long> userIds = taskDto.getUserIds();
         Set<User> users = new HashSet<>(userRepository.findAllById(userIds));
 
+        checkIfUserIsAssignedToTask(userIds);
         task.setUsers(users);
         return taskRepository.save(task);
+    }
+
+    private void checkIfUserIsAssignedToTask(List<Long> userIds){
+        Long currentUserLoggedInId = jwtUserDetailsService.getCurrentUserId();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if(auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ADMIN"))
+                && !userIds.contains(currentUserLoggedInId)){
+                throw new UserNotAssignedToTaskException("You must be assigned to this task in order to edit it");
+        }
+
     }
 }

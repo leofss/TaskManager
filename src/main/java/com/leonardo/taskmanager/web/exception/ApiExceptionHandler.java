@@ -2,6 +2,7 @@ package com.leonardo.taskmanager.web.exception;
 
 import com.leonardo.taskmanager.exception.EmailUniqueViolationException;
 import com.leonardo.taskmanager.exception.EntityNotFoundExecption;
+import com.leonardo.taskmanager.exception.UserNotAssignedToTaskException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,4 +57,14 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
 
     }
+
+    @ExceptionHandler(UserNotAssignedToTaskException.class)
+    public ResponseEntity<ErrorMessage> handleUserNotAssignedToTaskException(UserNotAssignedToTaskException ex,
+                                                                    HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
+    }
+
 }
