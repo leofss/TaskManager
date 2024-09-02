@@ -3,6 +3,7 @@ package com.leonardo.taskmanager.service;
 import com.leonardo.taskmanager.entity.Task;
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.exception.EntityNotFoundExecption;
+import com.leonardo.taskmanager.exception.InvalidSearchException;
 import com.leonardo.taskmanager.exception.UserNotAssignedToTaskException;
 import com.leonardo.taskmanager.jwt.JwtUserDetailsService;
 import com.leonardo.taskmanager.repository.TaskRepository;
@@ -13,7 +14,9 @@ import com.leonardo.taskmanager.web.dto.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -86,5 +89,26 @@ public class TaskService {
                 throw new UserNotAssignedToTaskException("You must be assigned to this task in order to edit it");
         }
 
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TaskResponseDto> filterByStatus(String status, Pageable pageable) {
+        Task.Status taskStatus;
+        try {
+            taskStatus = Task.Status.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidSearchException("The provided status is invalid. Please use one of the following: PENDENTE, EM_ANDAMENTO, CONCLUIDA.");
+        }
+
+        return taskRepository.findByStatus(taskStatus, pageable).map(TaskMapper::toTaskDtoResponse);
+    }
+
+    public Page<TaskResponseDto> orderByDueDate(String dueDate, Pageable  pageable) {
+        if(!dueDate.equals("dueDate")){
+            throw new InvalidSearchException("The provided sorting option is invalid. Please use dueDate");
+        }
+        Sort sort = Sort.by(Sort.Order.desc("dueDate"));
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return taskRepository.findAll(sortedPageable).map(TaskMapper::toTaskDtoResponse);
     }
 }

@@ -2,6 +2,7 @@ package com.leonardo.taskmanager.web.controller;
 
 import com.leonardo.taskmanager.entity.Task;
 import com.leonardo.taskmanager.entity.User;
+import com.leonardo.taskmanager.exception.NoSearchParametersProvidedException;
 import com.leonardo.taskmanager.service.TaskService;
 import com.leonardo.taskmanager.web.dto.*;
 import com.leonardo.taskmanager.web.dto.mapper.TaskMapper;
@@ -16,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @RestController
@@ -48,5 +51,17 @@ public class TaskController {
     public ResponseEntity<TaskResponseDto> edit(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto) {
         Task task = taskService.edit(id, taskDto);
         return ResponseEntity.ok().body(TaskMapper.toTaskDtoResponse(task));
+    }
+
+    @GetMapping("/search")
+    public Page<TaskResponseDto> searchTasks(@RequestParam(required = false, name = "sort") String dueDate,
+            @RequestParam(required = false,name = "status") String status, Pageable pageable){
+        if(status != null && !status.isEmpty()){
+            return taskService.filterByStatus(status, pageable);
+        } else if (dueDate != null) {
+            return taskService.orderByDueDate(dueDate, pageable);
+        }else{
+            throw new NoSearchParametersProvidedException("At least one parameter ('status' or 'sort') must be provided");
+        }
     }
 }

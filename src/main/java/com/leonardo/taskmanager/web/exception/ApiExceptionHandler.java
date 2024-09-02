@@ -1,8 +1,6 @@
 package com.leonardo.taskmanager.web.exception;
 
-import com.leonardo.taskmanager.exception.EmailUniqueViolationException;
-import com.leonardo.taskmanager.exception.EntityNotFoundExecption;
-import com.leonardo.taskmanager.exception.UserNotAssignedToTaskException;
+import com.leonardo.taskmanager.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -66,5 +64,23 @@ public class ApiExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
     }
+
+    @ExceptionHandler(InvalidSearchException.class)
+    public ResponseEntity<ErrorMessage> handleInvalidSearchException(InvalidSearchException ex,
+                                                                             HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
+    }
+
+    @ExceptionHandler(NoSearchParametersProvidedException.class)
+    public ResponseEntity<ErrorMessage> handleNoParametersProvided(NoSearchParametersProvidedException ex,
+                                                                   HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
 
 }
