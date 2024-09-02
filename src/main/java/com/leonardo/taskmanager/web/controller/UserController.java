@@ -4,6 +4,7 @@ import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.repository.projection.UserProjection;
 import com.leonardo.taskmanager.service.UserService;
 import com.leonardo.taskmanager.web.dto.PageableDto;
+import com.leonardo.taskmanager.web.dto.TaskResponseDto;
 import com.leonardo.taskmanager.web.dto.UserDto;
 import com.leonardo.taskmanager.web.dto.UserResponseDto;
 import com.leonardo.taskmanager.web.dto.mapper.PageableMapper;
@@ -46,9 +47,13 @@ public class UserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-
     public ResponseEntity<UserResponseDto> edit(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         User user = userService.edit(id, userDto);
         return ResponseEntity.ok().body(UserMapper.toUserDtoResponse(user));
+    }
+
+    @GetMapping("/{id}/tasks")
+    public Page<TaskResponseDto> getTasksByUserId(@PathVariable Long id,Pageable pageable) {
+        return userService.findTasksByUserId(id, pageable);
     }
 }

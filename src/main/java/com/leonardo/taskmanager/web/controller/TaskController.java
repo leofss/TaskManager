@@ -37,7 +37,7 @@ public class TaskController {
     public Page<TaskResponseDto> getTasksForCurrentUser(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return taskService.getTasksForUser(username, pageable);
+        return taskService.getTasksFromLoggedInUser(username, pageable);
     }
 
     @DeleteMapping("/{id}")

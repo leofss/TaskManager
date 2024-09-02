@@ -1,11 +1,15 @@
 package com.leonardo.taskmanager.service;
 
+import com.leonardo.taskmanager.entity.Task;
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.exception.EmailUniqueViolationException;
 import com.leonardo.taskmanager.exception.EntityNotFoundExecption;
+import com.leonardo.taskmanager.repository.TaskRepository;
 import com.leonardo.taskmanager.repository.UserRepository;
 import com.leonardo.taskmanager.repository.projection.UserProjection;
+import com.leonardo.taskmanager.web.dto.TaskResponseDto;
 import com.leonardo.taskmanager.web.dto.UserDto;
+import com.leonardo.taskmanager.web.dto.mapper.TaskMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -69,5 +74,13 @@ public class UserService {
         if(userRepository.existsByEmail(email)){
             throw new EmailUniqueViolationException(String.format("User with Email %s already exists", email));
         }
+    }
+
+    public Page<TaskResponseDto> findTasksByUserId(Long id, Pageable pageable) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundExecption("User with id " + id + " not found"));
+        Page<Task> taskPage = taskRepository.findTasksByUserId(user.getId(), pageable);
+        return taskPage.map(TaskMapper::toTaskDtoResponse);
+
     }
 }

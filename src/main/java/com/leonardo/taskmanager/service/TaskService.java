@@ -46,7 +46,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TaskResponseDto> getTasksForUser(String username, Pageable pageable) {
+    public Page<TaskResponseDto> getTasksFromLoggedInUser(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
