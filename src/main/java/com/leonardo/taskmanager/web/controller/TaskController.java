@@ -4,6 +4,7 @@ import com.leonardo.taskmanager.entity.Task;
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.exception.NoSearchParametersProvidedException;
 import com.leonardo.taskmanager.service.TaskService;
+import com.leonardo.taskmanager.web.api.TaskApi;
 import com.leonardo.taskmanager.web.dto.*;
 import com.leonardo.taskmanager.web.dto.mapper.TaskMapper;
 import com.leonardo.taskmanager.web.dto.mapper.UserMapper;
@@ -22,40 +23,35 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/task")
-public class TaskController {
+public class TaskController implements TaskApi {
     private final TaskService taskService;
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<TaskResponseDto> create(@RequestBody @Valid TaskDto taskDto) {
+    @Override
+    public ResponseEntity<TaskResponseDto> create(TaskDto taskDto) {
         Task task = taskService.create(taskDto);
         return ResponseEntity.status(201).body(TaskMapper.toTaskDtoResponse(task));
     }
 
-    @GetMapping
+    @Override
     public Page<TaskResponseDto> getTasksForCurrentUser(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return taskService.getTasksFromLoggedInUser(username, pageable);
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @Override
+    public void delete(Long id) {
         taskService.delete(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> edit(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto) {
+    @Override
+    public ResponseEntity<TaskResponseDto> edit(Long id, TaskDto taskDto) {
         Task task = taskService.edit(id, taskDto);
         return ResponseEntity.ok().body(TaskMapper.toTaskDtoResponse(task));
     }
 
-    @GetMapping("/search")
-    public Page<TaskResponseDto> searchTasks(@RequestParam(required = false, name = "sort") String dueDate,
-            @RequestParam(required = false,name = "status") String status, Pageable pageable){
+    @Override
+    public Page<TaskResponseDto> searchTasks(String dueDate, String status, Pageable pageable) {
         if(status != null && !status.isEmpty()){
             return taskService.filterByStatus(status, pageable);
         } else if (dueDate != null) {
