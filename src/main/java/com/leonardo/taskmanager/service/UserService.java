@@ -39,10 +39,19 @@ public class UserService {
 
     @Transactional
     public void delete(Long id){
-        if(!userRepository.existsById(id)){
-            throw new EntityNotFoundExecption("User with id " + id + " not found");
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundExecption("User with id " + id + " not found"));
+
+        for (Task task : user.getTasks()) {
+            task.getUsers().remove(user);
+            taskRepository.save(task);
         }
-        userRepository.deleteById(id);
+
+        user.getTasks().clear();
+        userRepository.save(user);
+
+        userRepository.delete(user);
+
     }
 
     @Transactional
