@@ -23,9 +23,6 @@ public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private static TaskRepository taskRepository;
-
     @Test
     void UserRepository_findAllPageable_ReturnPageUserProjetcion(){
         User user1 = new User();
@@ -66,7 +63,6 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_findByEmail_ReturnUserByEmail(){
         User user = new User();
-        user.setId(1L);
         user.setUsername("leonardo");
         user.setEmail("leo@gmail.com");
         user.setPassword("12345");
@@ -86,7 +82,6 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_findRoleByEmail_ReturnRoleByEmail(){
         User user = new User();
-        user.setId(1L);
         user.setUsername("leonardo");
         user.setEmail("leo@gmail.com");
         user.setPassword("12345");
@@ -105,7 +100,6 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_existsByRole_ReturnIfExistsByRole(){
         User user = new User();
-        user.setId(1L);
         user.setUsername("leonardo");
         user.setEmail("leo@gmail.com");
         user.setPassword("12345");
@@ -124,7 +118,6 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_findByUsername_ReturnUserByUsername(){
         User user = new User();
-        user.setId(1L);
         user.setUsername("leonardo");
         user.setEmail("leo@gmail.com");
         user.setPassword("12345");
