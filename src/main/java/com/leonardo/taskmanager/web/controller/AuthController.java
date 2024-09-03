@@ -2,6 +2,7 @@ package com.leonardo.taskmanager.web.controller;
 
 import com.leonardo.taskmanager.jwt.JwtToken;
 import com.leonardo.taskmanager.jwt.JwtUserDetailsService;
+import com.leonardo.taskmanager.web.api.AuthApi;
 import com.leonardo.taskmanager.web.dto.UserLoginDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,12 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1")
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthApi {
     private final JwtUserDetailsService jwtUserDetailsService;
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/auth")
-    public ResponseEntity<JwtToken> authenticate(@RequestBody @Valid UserLoginDto userLoginDto, HttpServletRequest req) {
+
+    @Override
+    public ResponseEntity<JwtToken> authenticate(UserLoginDto userLoginDto) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());

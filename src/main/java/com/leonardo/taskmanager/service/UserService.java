@@ -18,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -27,7 +30,10 @@ public class UserService {
 
     @Transactional
     public User create(User user){
-        checkIfEmailExists(user.getEmail());
+        Optional<User> userRetrieved = userRepository.findByEmail(user.getEmail());
+        if(userRetrieved.isPresent()){
+            throw new EmailUniqueViolationException(String.format("User with Email %s already exists", user.getEmail()));
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -56,7 +62,7 @@ public class UserService {
 
     @Transactional
     public User edit(Long id, UserDto userDto) {
-        checkIfEmailExists(userDto.getEmail());
+        checkIfEmailExists(userDto.getEmail(), id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundExecption("User with id " + id + " not found"));
 
@@ -79,10 +85,12 @@ public class UserService {
         return userRepository.findRoleByEmail(email);
     }
 
-    private void checkIfEmailExists(String email){
-        if(userRepository.existsByEmail(email)){
+    private void checkIfEmailExists(String email, Long id){
+        Optional<User> user = userRepository.findByEmail(email);
+        if(user.isPresent() && !Objects.equals(user.get().getId(), id)){
             throw new EmailUniqueViolationException(String.format("User with Email %s already exists", email));
         }
+
     }
 
     public Page<TaskResponseDto> findTasksByUserId(Long id, Pageable pageable) {
