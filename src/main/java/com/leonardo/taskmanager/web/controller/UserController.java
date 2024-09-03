@@ -3,6 +3,7 @@ package com.leonardo.taskmanager.web.controller;
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.repository.projection.UserProjection;
 import com.leonardo.taskmanager.service.UserService;
+import com.leonardo.taskmanager.web.api.UserApi;
 import com.leonardo.taskmanager.web.dto.PageableDto;
 import com.leonardo.taskmanager.web.dto.TaskResponseDto;
 import com.leonardo.taskmanager.web.dto.UserDto;
@@ -20,40 +21,37 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/user")
-public class UserController {
+public class UserController implements UserApi {
     private final UserService userService;
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDto> create(@RequestBody @Valid UserDto userDto) {
+    @Override
+    public ResponseEntity<UserResponseDto> create(UserDto userDto) {
         User user = UserMapper.toUserEntity(userDto);
         userService.create(user);
         return ResponseEntity.status(201).body(UserMapper.toUserDtoResponse(user));
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<PageableDto> getAll(Pageable pageable) {
         Page<UserProjection> user = userService.findAll(pageable);
         return ResponseEntity.ok(PageableMapper.pageableDto(user));
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @Override
+    public void delete(Long id) {
         userService.delete(id);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDto> edit(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
+    @Override
+    public ResponseEntity<UserResponseDto> edit(Long id, UserDto userDto) {
         User user = userService.edit(id, userDto);
         return ResponseEntity.ok().body(UserMapper.toUserDtoResponse(user));
     }
 
-    @GetMapping("/{id}/tasks")
-    public Page<TaskResponseDto> getTasksByUserId(@PathVariable Long id,Pageable pageable) {
+    @Override
+    public Page<TaskResponseDto> getTasksByUserId(Long id, Pageable pageable) {
         return userService.findTasksByUserId(id, pageable);
     }
+
+
 }
