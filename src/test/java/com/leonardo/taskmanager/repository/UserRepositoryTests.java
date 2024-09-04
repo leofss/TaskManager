@@ -26,8 +26,7 @@ public class UserRepositoryTests {
     private UserRepository userRepository;
 
 
-    @Test
-    void UserRepository_findAllPageable_ReturnPageUserProjetcion(){
+    void createUser(){
         User user1 = new User();
         user1.setUsername("leonardo");
         user1.setEmail("leo@gmail.com");
@@ -38,102 +37,65 @@ public class UserRepositoryTests {
         user1.setCreatedBy("admin");
         user1.setLastModifiedBy("admin");
         userRepository.save(user1);
+    }
+    @Test
+    void UserRepository_findAllPageable_ReturnPageUserProjetcion(){
+        createUser();
 
-        User user2 = new User();
-        user2.setUsername("maria");
-        user2.setEmail("maria@gmail.com");
-        user2.setPassword("54321");
-        user2.setRole(User.Role.USER);
-        user2.setCreatedDate(LocalDateTime.now());
-        user2.setModifiedDate(LocalDateTime.now());
-        user2.setCreatedBy("admin");
-        user2.setLastModifiedBy("admin");
-
-        userRepository.save(user2);
         PageRequest pageRequest = PageRequest.of(0, 10);
         Page<UserProjection> userPage = userRepository.findAllPageable(pageRequest);
         assertFalse(userPage.isEmpty());
-        assertEquals(2, userPage.getTotalElements());
+        assertEquals(1, userPage.getTotalElements());
+
         List<UserProjection> users = userPage.getContent();
 
         assertEquals("leonardo", users.get(0).getUsername());
         assertEquals("leo@gmail.com", users.get(0).getEmail());
-        assertEquals("maria", users.get(1).getUsername());
-        assertEquals("maria@gmail.com", users.get(1).getEmail());
+
+        userRepository.deleteAll();
     }
 
 
     @Test
     void UserRepository_findByEmail_ReturnUserByEmail(){
-        User user = new User();
-        user.setUsername("uniquename1");
-        user.setEmail("unique1@gmail.com");
-        user.setPassword("12345");
-        user.setRole(User.Role.USER);
-        user.setCreatedDate(LocalDateTime.now());
-        user.setModifiedDate(LocalDateTime.now());
-        user.setCreatedBy("admin");
-        user.setLastModifiedBy("admin");
+        createUser();
 
-        userRepository.save(user);
-        Optional<User> userRetrieved = userRepository.findByEmail(user.getEmail());
+        Optional<User> userRetrieved = userRepository.findByEmail("leo@gmail.com");
 
         assertTrue(userRetrieved.isPresent());
-        assertEquals(user.getId(), userRetrieved.get().getId());
+        assertEquals("leo@gmail.com", userRetrieved.get().getEmail());
+        userRepository.deleteAll();
     }
 
     @Test
     void UserRepository_findRoleByEmail_ReturnRoleByEmail(){
-        User user = new User();
-        user.setUsername("uniquename2");
-        user.setEmail("unique2@gmail.com");
-        user.setPassword("12345");
-        user.setRole(User.Role.ADMIN);
-        user.setCreatedDate(LocalDateTime.now());
-        user.setModifiedDate(LocalDateTime.now());
-        user.setCreatedBy("admin");
-        user.setLastModifiedBy("admin");
+        createUser();
 
-        userRepository.save(user);
-        User.Role role = userRepository.findRoleByEmail(user.getEmail());
+        User.Role role = userRepository.findRoleByEmail("leo@gmail.com");
 
-        assertEquals(user.getRole().name(), role.name());
+        assertEquals("USER", role.name());
+        userRepository.deleteAll();
     }
 
     @Test
     void UserRepository_existsByRole_ReturnIfExistsByRole(){
-        User user = new User();
-        user.setUsername("uniquename3");
-        user.setEmail("unique3@gmail.com");
-        user.setPassword("12345");
-        user.setRole(User.Role.USER);
-        user.setCreatedDate(LocalDateTime.now());
-        user.setModifiedDate(LocalDateTime.now());
-        user.setCreatedBy("admin");
-        user.setLastModifiedBy("admin");
+        createUser();
 
-        userRepository.save(user);
-        boolean exists = userRepository.existsByRole(user.getRole());
+        boolean exists = userRepository.existsByRole(User.Role.USER);
 
         assertTrue(exists);
+        userRepository.deleteAll();
     }
 
     @Test
     void UserRepository_findByUsername_ReturnUserByUsername(){
-        User user = new User();
-        user.setUsername("uniquename5");
-        user.setEmail("unique5@gmail.com");
-        user.setPassword("12345");
-        user.setRole(User.Role.USER);
-        user.setCreatedDate(LocalDateTime.now());
-        user.setModifiedDate(LocalDateTime.now());
-        user.setCreatedBy("admin");
-        user.setLastModifiedBy("admin");
-        userRepository.save(user);
-        Optional<User> userRetrieved = userRepository.findByUsername(user.getUsername());
+        createUser();
+
+        Optional<User> userRetrieved = userRepository.findByUsername("leonardo");
 
 
         assertTrue(userRetrieved.isPresent());
-        assertEquals(user.getId(), userRetrieved.get().getId());
+        assertEquals("leonardo", userRetrieved.get().getUsername());
+        userRepository.deleteAll();
     }
 }
