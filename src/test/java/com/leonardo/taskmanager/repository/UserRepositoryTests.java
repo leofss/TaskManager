@@ -2,6 +2,7 @@ package com.leonardo.taskmanager.repository;
 
 import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.repository.projection.UserProjection;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -19,9 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@Slf4j
 public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
+
 
     @Test
     void UserRepository_findAllPageable_ReturnPageUserProjetcion(){
@@ -63,8 +66,8 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_findByEmail_ReturnUserByEmail(){
         User user = new User();
-        user.setUsername("leonardo");
-        user.setEmail("leo@gmail.com");
+        user.setUsername("uniquename1");
+        user.setEmail("unique1@gmail.com");
         user.setPassword("12345");
         user.setRole(User.Role.USER);
         user.setCreatedDate(LocalDateTime.now());
@@ -82,10 +85,10 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_findRoleByEmail_ReturnRoleByEmail(){
         User user = new User();
-        user.setUsername("leonardo");
-        user.setEmail("leo@gmail.com");
+        user.setUsername("uniquename2");
+        user.setEmail("unique2@gmail.com");
         user.setPassword("12345");
-        user.setRole(User.Role.USER);
+        user.setRole(User.Role.ADMIN);
         user.setCreatedDate(LocalDateTime.now());
         user.setModifiedDate(LocalDateTime.now());
         user.setCreatedBy("admin");
@@ -100,8 +103,8 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_existsByRole_ReturnIfExistsByRole(){
         User user = new User();
-        user.setUsername("leonardo");
-        user.setEmail("leo@gmail.com");
+        user.setUsername("uniquename3");
+        user.setEmail("unique3@gmail.com");
         user.setPassword("12345");
         user.setRole(User.Role.USER);
         user.setCreatedDate(LocalDateTime.now());
@@ -118,15 +121,14 @@ public class UserRepositoryTests {
     @Test
     void UserRepository_findByUsername_ReturnUserByUsername(){
         User user = new User();
-        user.setUsername("leonardo");
-        user.setEmail("leo@gmail.com");
+        user.setUsername("uniquename5");
+        user.setEmail("unique5@gmail.com");
         user.setPassword("12345");
         user.setRole(User.Role.USER);
         user.setCreatedDate(LocalDateTime.now());
         user.setModifiedDate(LocalDateTime.now());
         user.setCreatedBy("admin");
         user.setLastModifiedBy("admin");
-
         userRepository.save(user);
         Optional<User> userRetrieved = userRepository.findByUsername(user.getUsername());
 
