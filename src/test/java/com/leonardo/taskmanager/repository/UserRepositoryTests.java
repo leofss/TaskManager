@@ -20,11 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-@Slf4j
 public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
-
 
     void createUser(){
         User user1 = new User();

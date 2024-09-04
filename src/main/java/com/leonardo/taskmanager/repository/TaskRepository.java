@@ -12,9 +12,12 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findByUsers(User user, Pageable pageable);
 
-
     Page<Task> findByStatus(Task.Status status, Pageable pageable);
 
     @Query("SELECT t FROM Task t JOIN t.users u WHERE u.id = :userId")
     Page<Task> findTasksByUserId(Long userId, Pageable pageable);
+
+    @Query("SELECT t FROM Task t ORDER BY t.dueDate DESC")
+    Page<Task> findAllTasksOrderedByDueDateDesc(Pageable pageable);
+
 }
