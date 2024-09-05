@@ -1,10 +1,7 @@
 package com.leonardo.taskmanager.jwt;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
-
-import java.util.Collection;
 
 public class JwtUserDetails extends User {
     private com.leonardo.taskmanager.entity.User user;

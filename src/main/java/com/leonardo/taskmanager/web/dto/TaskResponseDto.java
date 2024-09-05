@@ -2,7 +2,6 @@ package com.leonardo.taskmanager.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.leonardo.taskmanager.entity.Task;
-import com.leonardo.taskmanager.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

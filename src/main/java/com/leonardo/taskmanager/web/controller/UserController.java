@@ -10,14 +10,11 @@ import com.leonardo.taskmanager.web.dto.UserDto;
 import com.leonardo.taskmanager.web.dto.UserResponseDto;
 import com.leonardo.taskmanager.web.dto.mapper.PageableMapper;
 import com.leonardo.taskmanager.web.dto.mapper.UserMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController

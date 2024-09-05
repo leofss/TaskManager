@@ -1,25 +1,19 @@
 package com.leonardo.taskmanager.web.controller;
 
 import com.leonardo.taskmanager.entity.Task;
-import com.leonardo.taskmanager.entity.User;
 import com.leonardo.taskmanager.exception.NoSearchParametersProvidedException;
 import com.leonardo.taskmanager.service.TaskService;
 import com.leonardo.taskmanager.web.api.TaskApi;
-import com.leonardo.taskmanager.web.dto.*;
+import com.leonardo.taskmanager.web.dto.TaskDto;
+import com.leonardo.taskmanager.web.dto.TaskResponseDto;
 import com.leonardo.taskmanager.web.dto.mapper.TaskMapper;
-import com.leonardo.taskmanager.web.dto.mapper.UserMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
