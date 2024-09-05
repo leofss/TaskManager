@@ -25,16 +25,16 @@ public class UserRepositoryTests {
     private UserRepository userRepository;
 
     void createUser(){
-        User user1 = new User();
-        user1.setUsername("leonardo");
-        user1.setEmail("leo@gmail.com");
-        user1.setPassword("12345");
-        user1.setRole(User.Role.USER);
-        user1.setCreatedDate(LocalDateTime.now());
-        user1.setModifiedDate(LocalDateTime.now());
-        user1.setCreatedBy("admin");
-        user1.setLastModifiedBy("admin");
-        userRepository.save(user1);
+        User user = new User();
+        user.setUsername("leonardo");
+        user.setEmail("leo@gmail.com");
+        user.setPassword("12345");
+        user.setRole(User.Role.USER);
+        user.setCreatedDate(LocalDateTime.now());
+        user.setModifiedDate(LocalDateTime.now());
+        user.setCreatedBy("admin");
+        user.setLastModifiedBy("admin");
+        userRepository.save(user);
     }
     @Test
     void UserRepository_findAllPageable_ReturnPageUserProjetcion(){

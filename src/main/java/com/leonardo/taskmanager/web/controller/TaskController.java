@@ -28,7 +28,9 @@ public class TaskController implements TaskApi {
 
     @Override
     public ResponseEntity<TaskResponseDto> create(TaskDto taskDto) {
-        Task task = taskService.create(taskDto);
+
+        Task task = TaskMapper.toTaskEntity(taskDto);
+        taskService.create(task);
         return ResponseEntity.status(201).body(TaskMapper.toTaskDtoResponse(task));
     }
 

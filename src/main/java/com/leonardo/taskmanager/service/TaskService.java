@@ -35,11 +35,11 @@ public class TaskService {
     private final JwtUserDetailsService jwtUserDetailsService;
 
     @Transactional
-    public Task create(TaskDto taskDto){
-        List<Long> userIds = taskDto.getUserIds();
+    public Task create(Task task){
+        List<Long> userIds = task.getUsers().stream()
+                .map(User::getId)
+                .toList();
         Set<User> users = new HashSet<>(userRepository.findAllById(userIds));
-
-        Task task = TaskMapper.toTaskEntity(taskDto);
         task.setUsers(users);
         task.setCreatedDate(LocalDateTime.now());
         return taskRepository.save(task);
