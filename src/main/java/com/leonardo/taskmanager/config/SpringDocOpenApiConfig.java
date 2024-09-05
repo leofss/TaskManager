@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +15,11 @@ public class SpringDocOpenApiConfig {
     @Bean
     public OpenAPI openAPI(){
         return new OpenAPI()
-                .components(
-                        new Components().addSecuritySchemes("security", securityScheme())
-                )
+                .addSecurityItem(new SecurityRequirement().addList("JavaInUseSecurityScheme"))
+                .components(new Components().addSecuritySchemes("JavaInUseSecurityScheme", new SecurityScheme()
+                        .name("JavaInUseSecurityScheme").type(SecurityScheme.Type.HTTP).scheme("bearer")
+                        .bearerFormat("JWT")
+                ))
                 .info(new Info()
                         .title("REST API - Task Manager")
                         .description("API for managing tasks")
@@ -26,12 +29,4 @@ public class SpringDocOpenApiConfig {
                 );
     }
 
-    private SecurityScheme securityScheme(){
-        return new SecurityScheme().description("Insert a valid token")
-                .type(SecurityScheme.Type.HTTP)
-                .in(SecurityScheme.In.HEADER)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .name("security");
-    }
 }

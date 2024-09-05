@@ -57,7 +57,8 @@ public interface TaskApi {
     ResponseEntity<TaskResponseDto> edit(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto);
 
     @GetMapping("/search")
-    @Operation(summary = "List by filtering status or sorting dueDate", description = "Available only for all roles")
+    @Operation(summary = "List by filtering status or sorting dueDate",
+            description = "Use search?sort=dueDate or search?=PENDENTE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task successfully listed"),
             @ApiResponse(responseCode = "401", description = "Invalid token"),

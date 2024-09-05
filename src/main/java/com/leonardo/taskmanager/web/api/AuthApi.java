@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface AuthApi {
 
     @PostMapping("/auth")
-    @Operation(summary = "Login", description = "Available only for all roles")
+    @Operation(summary = "Login", description = "Generate JWT token valid for 30 minutes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Users sucessfully logged in"),
             @ApiResponse(responseCode = "400", description = "Invalid credentials"),
