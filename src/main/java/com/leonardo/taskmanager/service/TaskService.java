@@ -105,6 +105,7 @@ public class TaskService {
         if(!dueDate.equals("dueDate")){
             throw new InvalidSearchException("The provided sorting option is invalid. Please use dueDate");
         }
+
         return taskRepository.findAllTasksOrderedByDueDateDesc(pageable).map(TaskMapper::toTaskDtoResponse);
     }
 }
