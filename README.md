@@ -19,13 +19,30 @@ Desenvolver uma aplicação de gerenciamento de tarefas (todo list) com as segui
    - Permitir que tarefas sejam atribuídas a usuários específicos.
    - Permitir que as tarefas de um usuário específico sejam listadas.
 
-## Instruções para Implementação
+
+## Instruções para Implementação Com Docker
+
+### Passos para Configuração
+ 
+1. Clone o repositório:   
+    ```bash
+    git clone git@github.com:leofss/TaskManager.git
+    cd TaskManager
+    ```
+2. Suba o container (**verifique se a porta 8081 está disponível**)
+   ```bash
+    docker-compose up
+    ```
+3. Acesse [Swagger local](http://localhost:8081/swagger-ui/index.html) para verificar os endpoints
+   
+4. Siga as Instruções de utilização mais a baixo  
+
+## Instruções para Implementação Sem Docker
 
 1. [Instale Java SDK 21](https://www.oracle.com/br/java/technologies/downloads/#java21)
 2. [Instale Maven](https://maven.apache.org/install.html)
 3. [Instale PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
 4. [Instale PgAdmin](https://www.pgadmin.org/download/)
- 
 
 ### Passos para Configuração
 
@@ -58,10 +75,10 @@ Desenvolver uma aplicação de gerenciamento de tarefas (todo list) com as segui
     mvn spring-boot:run
     ```
     
-### Passos para Utilização
+## Passos para Utilização
 
 1. O sistema irá criar um usuário com permissão de admin para começar as requisições
-1. Todos os endpoints exigem a inserção de um token no header como um Bearer Token 
+2. Todos os endpoints exigem a inserção de um token no header como um Bearer Token 
    
     ```bash
     //Credenciais
@@ -70,7 +87,7 @@ Desenvolver uma aplicação de gerenciamento de tarefas (todo list) com as segui
     "password":"12345"
     }
     ```
-3. Acesse [Swagger local](http://localhost:8080/swagger-ui/index.html) para verificar os endpoints
+3. Acesse [Swagger local](http://localhost:8080/swagger-ui/index.html) para verificar os endpoints (Caso tenha usado docker estará na porta 8081)
    
    3.1 Lembre-se de após logar como admin autenticar seu token no botão "Authorize" no Swagger pois
    os endpoints requerem um token, e alguns apenas permitem tokens com permissão de ADMIN
